@@ -8,9 +8,13 @@ public class PlayerMove : MonoBehaviour {
     private Rigidbody2D rb;
     public InputMain controls;
 
-    public float speed = 10f;
-    private float gravity = -9.81f;
-    private float groundThreshold = 0.1f;
+    public float speed; // 4f
+    public float jumpForce; // 6f
+    public float groundThreshold; // 0.1f
+    public float jumpCooldown; // 0.2f
+
+    private bool jumping;
+    private float jumpTime;
 
     private void Awake() {
         controls = new InputMain();
@@ -22,7 +26,18 @@ public class PlayerMove : MonoBehaviour {
     }
 
     private void Update() {
-        Debug.Log(isGrounded());
+        // Tick jump cooldown
+        if (jumpTime > 0f) jumpTime -= Time.deltaTime;
+        jumpTime = Mathf.Clamp(jumpTime, 0f, jumpCooldown);
+
+        // If out of jump cooldown
+        if (jumpTime == 0f) {
+            // Reset jumping state when grounded
+            if (IsGrounded() && jumping) jumping = false;
+
+            // Jump if triggered and not already jumping
+            if (controls.Player.Jump.triggered && !jumping) Jump();
+        }
 
         Move();
     }
@@ -32,8 +47,15 @@ public class PlayerMove : MonoBehaviour {
 
         rb.velocity = new Vector2(dir * speed, rb.velocity.y);
     }
+    
+    private void Jump() {
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
 
-    private bool isGrounded() {
+        jumping = true;
+        jumpTime = jumpCooldown;
+    }
+
+    private bool IsGrounded() {
         RaycastHit2D hit = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.down, groundThreshold, LayerMask.GetMask("Ground"));
 
         return hit.collider != null;
