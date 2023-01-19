@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerMove))]
+[RequireComponent(typeof(PlayerController))]
 public class PlayerWallJump : MonoBehaviour {
     private Rigidbody2D rb;
-    private PlayerMove playerMove;
+    private PlayerController playerController;
     public InputMain controls;
 
     public float delay; // 0.2f
@@ -21,13 +21,13 @@ public class PlayerWallJump : MonoBehaviour {
 
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
-        playerMove = GetComponent<PlayerMove>();
+        playerController = GetComponent<PlayerController>();
     }
 
     private void Update() {
         CheckWall();
 
-        if (!playerMove.isGrounded()) {
+        if (!playerController.IsGrounded()) {
             airTime += Time.deltaTime;
         } else {
             airTime = 0f;
