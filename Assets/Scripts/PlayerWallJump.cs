@@ -27,7 +27,7 @@ public class PlayerWallJump : MonoBehaviour {
     private void Update() {
         CheckWall();
 
-        if (!playerController.IsGrounded()) {
+        if (playerController.playerState != PlayerController.PlayerState.Grounded) {
             airTime += Time.deltaTime;
         } else {
             airTime = 0f;
