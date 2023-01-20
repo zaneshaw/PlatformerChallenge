@@ -948,7 +948,6 @@ GameObject:
   - component: {fileID: 1683490697}
   - component: {fileID: 1683490699}
   - component: {fileID: 1683490701}
-  - component: {fileID: 1683490700}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1070,20 +1069,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &1683490700
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1683490692}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c34bacd9b3f2c94b839b6f48695892e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  delay: 0.2
-  force: {x: 5, y: 15}
 --- !u!114 &1683490701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1096,7 +1081,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc68e534ed317b44a0004ed013a2d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerState: 0
   acceleration: 2.5
   deceleration: 0.4
   maxSpeed: 5
@@ -1104,3 +1088,8 @@ MonoBehaviour:
   groundCheckDistance: 0.04
   jumpForce: 18
   jumpCooldown: 0.2
+  wallJumpForce: 5
+  wallJumpDelay: 0.1
+  wallJumpFreeze: 0.1
+  maxWallAngle: 1
+  wallCheckDistance: 0.01
