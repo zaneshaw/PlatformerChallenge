@@ -43,17 +43,10 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void Update() {
-        // Tick jump cooldown
-        if (jumpCooldownTimer > 0f) jumpCooldownTimer -= Time.deltaTime;
-        jumpCooldownTimer = Mathf.Clamp(jumpCooldownTimer, 0f, jumpCooldown);
-
-        // Tick walljump delay
-        if (wallJumpDelayTimer > 0f) wallJumpDelayTimer -= Time.deltaTime;
-        wallJumpDelayTimer = Mathf.Clamp(wallJumpDelayTimer, 0f, wallJumpDelay);
-
-        // Tick walljump movement freeze
-        if (wallJumpFreezeTimer > 0f) wallJumpFreezeTimer -= Time.deltaTime;
-        wallJumpFreezeTimer = Mathf.Clamp(wallJumpFreezeTimer, 0f, wallJumpFreeze);
+        // Tick cooldowns
+        TickCooldown(jumpCooldown, ref jumpCooldownTimer);
+        TickCooldown(wallJumpDelay, ref wallJumpDelayTimer);
+        TickCooldown(wallJumpFreeze, ref wallJumpFreezeTimer);
 
         // If player is grounded
         if (movementState == MovementState.Grounded) {
@@ -114,7 +107,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    public void SetPlayerState() {
+    private void SetPlayerState() {
         if (IsGrounded()) {
             movementState = MovementState.Grounded;
             wallJumpDelayTimer = wallJumpDelay;
@@ -133,6 +126,15 @@ public class PlayerController : MonoBehaviour {
         }
 
         return false;
+    }
+
+    private bool TickCooldown(float cooldown, ref float timer, float? t = null) {
+        t ??= Time.deltaTime;
+
+        if (timer > 0f) timer -= (float) t;
+        timer = Mathf.Clamp(timer, 0f, cooldown);
+
+        return timer == 0f;
     }
 
     private void OnEnable() {
