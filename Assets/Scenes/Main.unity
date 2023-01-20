@@ -1081,11 +1081,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc68e534ed317b44a0004ed013a2d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 2.5
-  deceleration: 0.4
+  groundAcceleration: 2.5
+  groundDeceleration: 0.4
   maxSpeed: 5
   maxGroundAngle: 0.6
   groundCheckDistance: 0.04
+  airAcceleration: 1
+  airDeceleration: 0.05
   jumpForce: 18
   jumpCooldown: 0.2
   wallJumpForce: 5
