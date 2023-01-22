@@ -3157,6 +3157,7 @@ GameObject:
   - component: {fileID: 1683490694}
   - component: {fileID: 1683490697}
   - component: {fileID: 1683490699}
+  - component: {fileID: 1683490702}
   - component: {fileID: 1683490701}
   m_Layer: 0
   m_Name: Player
@@ -3291,7 +3292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc68e534ed317b44a0004ed013a2d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  invincibilityTime: 0.1
   groundAcceleration: 2.5
   groundDeceleration: 0.4
   maxSpeed: 5
@@ -3307,3 +3308,16 @@ MonoBehaviour:
   maxWallAngle: 1
   wallCheckDistance: 0.01
   detailMap: {fileID: 932373508}
+--- !u!114 &1683490702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1683490692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05093996da0af5a4499256686e76de49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
