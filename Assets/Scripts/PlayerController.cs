@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlayerController : MonoBehaviour {
     private InputMain controls;
@@ -15,10 +16,14 @@ public class PlayerController : MonoBehaviour {
     public MovementState movementState { get; private set; }
     private float moveDirection;
     private float moveDeadzone;
-    private RaycastHit2D[] hits = new RaycastHit2D[16];
+    private RaycastHit2D[] hits;
     private float jumpCooldownTimer;
     private float wallJumpDelayTimer;
     private float wallJumpFreezeTimer;
+    private float invincibilityTimer;
+
+    [Header("Player")]
+    [SerializeField] private float invincibilityTime;
 
     [Header("Movement")]
     [SerializeField] private float groundAcceleration;
@@ -38,6 +43,9 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float maxWallAngle;
     [SerializeField] private float wallCheckDistance;
 
+    [Header("References")]
+    [SerializeField] private Tilemap detailMap;
+
     private void Awake() {
         controls = new InputMain();
         col = GetComponent<Collider2D>();
@@ -49,6 +57,7 @@ public class PlayerController : MonoBehaviour {
         TickCooldown(jumpCooldown, ref jumpCooldownTimer);
         TickCooldown(wallJumpDelay, ref wallJumpDelayTimer);
         TickCooldown(wallJumpFreeze, ref wallJumpFreezeTimer);
+        TickCooldown(invincibilityTime, ref invincibilityTimer);
 
         // If player is grounded
         if (movementState == MovementState.Grounded) {
@@ -63,6 +72,26 @@ public class PlayerController : MonoBehaviour {
         }
 
         moveDirection = controls.Player.Move.ReadValue<float>();
+
+        if (hits != null && hits.Length > 0) {
+            for (int i = 0; i < hits.Length; i++) {
+                if (hits[i].collider != null) {
+                    Vector3Int pos = detailMap.WorldToCell(hits[i].point);
+                    TileBase tile = detailMap.GetTile(pos);
+                    if (tile != null && tile.name == "spikes" && invincibilityTimer == 0f) {
+                        invincibilityTimer = invincibilityTime;
+
+                        Jump();
+
+                        PlayerLife playerLife = GetComponent<PlayerLife>();
+                        float newHealth = playerLife.ChangeHealth(-1f);
+                        if (newHealth <= 0f) {
+                            playerLife.Die();
+                        }
+                    }
+                }
+            }
+        }
 
         SetPlayerState();
     }
@@ -120,7 +149,14 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void Die() {
+        Time.timeScale = 0f;
+
+        Debug.Log("die :(");
+    }
+
     public bool IsGrounded() {
+        hits = new RaycastHit2D[16];
         int hitCount = rb.Cast(Vector2.down, hits, groundCheckDistance);
 
         for (int i = 0; i < hitCount; i++) {
@@ -135,7 +171,7 @@ public class PlayerController : MonoBehaviour {
     private bool TickCooldown(float cooldown, ref float timer, float? t = null) {
         t ??= Time.deltaTime;
 
-        if (timer > 0f) timer -= (float) t;
+        if (timer > 0f) timer -= (float)t;
         timer = Mathf.Clamp(timer, 0f, cooldown);
 
         return timer == 0f;
