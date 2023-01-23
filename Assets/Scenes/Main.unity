@@ -3293,13 +3293,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invincibilityTime: 0.1
-  groundAcceleration: 2.5
-  groundDeceleration: 0.4
+  acceleration: 2.5
+  deceleration: 0.4
   maxSpeed: 5
   maxGroundAngle: 0.6
   groundCheckDistance: 0.04
-  airAcceleration: 1
-  airDeceleration: 0.05
   jumpForce: 18
   jumpCooldown: 0.2
   wallJumpForce: 5

@@ -26,15 +26,13 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float invincibilityTime;
 
     [Header("Movement")]
-    [SerializeField] private float groundAcceleration;
-    [SerializeField] private float groundDeceleration;
+    [SerializeField] private float acceleration;
+    [SerializeField] private float deceleration;
     [SerializeField] private float maxSpeed;
     [SerializeField] private float maxGroundAngle;
     [SerializeField] private float groundCheckDistance;
 
     [Header("Jumping")]
-    [SerializeField] private float airAcceleration;
-    [SerializeField] private float airDeceleration;
     [SerializeField] private float jumpForce;
     [SerializeField] private float jumpCooldown;
     [SerializeField] private float wallJumpForce;
@@ -102,7 +100,6 @@ public class PlayerController : MonoBehaviour {
 
     private void Move() {
         if (Mathf.Abs(moveDirection) >= moveDeadzone) {
-            float acceleration = movementState == MovementState.Grounded ? groundAcceleration : airAcceleration;
             rb.velocity += new Vector2(moveDirection * acceleration, 0f);
 
             if (Mathf.Abs(rb.velocity.x) > maxSpeed) {
@@ -111,7 +108,6 @@ public class PlayerController : MonoBehaviour {
         }
 
         if (moveDirection == 0f) {
-            float deceleration = movementState == MovementState.Grounded ? groundDeceleration : airDeceleration;
             rb.velocity = new Vector2(rb.velocity.x * (1f - deceleration), rb.velocity.y);
         }
     }
@@ -136,7 +132,7 @@ public class PlayerController : MonoBehaviour {
         if (direction != 0) {
             wallJumpFreezeTimer = wallJumpFreeze;
 
-            rb.velocity = new Vector2(wallJumpForce * (float)direction, jumpForce);
+            rb.velocity = new Vector2(wallJumpForce * (float)direction, jumpForce * 0.9f);
         }
     }
 
