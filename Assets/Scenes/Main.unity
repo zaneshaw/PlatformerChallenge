@@ -3292,6 +3292,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc68e534ed317b44a0004ed013a2d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallDirection: 0
+  wallJumpCoyoteTimer: 0
+  detailMap: {fileID: 932373508}
   invincibilityTime: 0.1
   acceleration: 2.5
   deceleration: 0.4
@@ -3300,12 +3303,12 @@ MonoBehaviour:
   groundCheckDistance: 0.04
   jumpForce: 18
   jumpCooldown: 0.2
+  maxWallAngle: 1
+  wallCheckDistance: 0.01
   wallJumpForce: 5
   wallJumpDelay: 0.1
   wallJumpFreeze: 0.1
-  maxWallAngle: 1
-  wallCheckDistance: 0.01
-  detailMap: {fileID: 932373508}
+  wallJumpCoyote: 0.15
 --- !u!114 &1683490702
 MonoBehaviour:
   m_ObjectHideFlags: 0

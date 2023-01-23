@@ -17,10 +17,16 @@ public class PlayerController : MonoBehaviour {
     private float moveDirection;
     private float moveDeadzone;
     private RaycastHit2D[] hits;
+    private int wallDirection;
+
+    private float invincibilityTimer;
     private float jumpCooldownTimer;
     private float wallJumpDelayTimer;
     private float wallJumpFreezeTimer;
-    private float invincibilityTimer;
+    private float wallJumpCoyoteTimer;
+
+    [Header("References")]
+    [SerializeField] private Tilemap detailMap;
 
     [Header("Player")]
     [SerializeField] private float invincibilityTime;
@@ -35,14 +41,15 @@ public class PlayerController : MonoBehaviour {
     [Header("Jumping")]
     [SerializeField] private float jumpForce;
     [SerializeField] private float jumpCooldown;
-    [SerializeField] private float wallJumpForce;
-    [SerializeField] private float wallJumpDelay;
-    [SerializeField] private float wallJumpFreeze;
     [SerializeField] private float maxWallAngle;
     [SerializeField] private float wallCheckDistance;
 
-    [Header("References")]
-    [SerializeField] private Tilemap detailMap;
+    [Header("Wall Jumping")]
+    [SerializeField] private float wallJumpForce;
+    [SerializeField] private float wallJumpDelay;
+    [SerializeField] private float wallJumpFreeze;
+    [SerializeField] private float wallJumpCoyote;
+
 
     private void Awake() {
         controls = new InputMain();
@@ -52,10 +59,11 @@ public class PlayerController : MonoBehaviour {
 
     private void Update() {
         // Tick cooldowns
+        TickCooldown(invincibilityTime, ref invincibilityTimer);
         TickCooldown(jumpCooldown, ref jumpCooldownTimer);
         TickCooldown(wallJumpDelay, ref wallJumpDelayTimer);
         TickCooldown(wallJumpFreeze, ref wallJumpFreezeTimer);
-        TickCooldown(invincibilityTime, ref invincibilityTimer);
+        TickCooldown(wallJumpCoyote, ref wallJumpCoyoteTimer);
 
         // If player is grounded
         if (movementState == MovementState.Grounded) {
@@ -91,6 +99,22 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
+        if (wallJumpCoyoteTimer == 0f) {
+            wallDirection = 0;
+            RaycastHit2D rightWall = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.right, wallCheckDistance, LayerMask.GetMask("World"));
+            RaycastHit2D leftWall = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.left, wallCheckDistance, LayerMask.GetMask("World"));
+            if (rightWall.normal.x <= -maxWallAngle) {
+                wallDirection = -1;
+            } else if (leftWall.normal.x >= maxWallAngle) {
+                wallDirection = 1;
+            }
+
+            if (wallDirection != 0) {
+                wallJumpCoyoteTimer = wallJumpCoyote;
+            }
+        }
+
+
         SetPlayerState();
     }
 
@@ -119,20 +143,10 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void WallJump() {
-        int direction = 0;
-        RaycastHit2D rightWall = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.right, wallCheckDistance, LayerMask.GetMask("World"));
-        RaycastHit2D leftWall = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.left, wallCheckDistance, LayerMask.GetMask("World"));
-
-        if (rightWall.normal.x <= -maxWallAngle) {
-            direction = -1;
-        } else if (leftWall.normal.x >= maxWallAngle) {
-            direction = 1;
-        }
-
-        if (direction != 0) {
+        if (wallDirection != 0 && wallJumpCoyoteTimer >= 0f) {
             wallJumpFreezeTimer = wallJumpFreeze;
 
-            rb.velocity = new Vector2(wallJumpForce * (float)direction, jumpForce * 0.9f);
+            rb.velocity = new Vector2(wallJumpForce * (float)wallDirection, jumpForce * 0.9f);
         }
     }
 
